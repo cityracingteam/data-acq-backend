@@ -3,13 +3,15 @@ package routes
 import (
 	"context"
 
+	"github.com/cityracingteam/data-acq-backend/models"
+	"github.com/cityracingteam/data-acq-backend/util/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
 )
 
 func AuthCallbackHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+		gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 		if err != nil {
 			c.JSON(400, gin.H{
 				"error": err.Error(),
@@ -17,10 +19,25 @@ func AuthCallbackHandler() gin.HandlerFunc {
 			return
 		}
 
-		// Authenticated sucessfully, placeholder response
-		c.JSON(200, gin.H{
-			"user": user,
-		})
+		// Authenticated sucessfully!
+
+		// Get a models.User object
+		user := models.GetUserFromGoth(&gothUser)
+		// Use said object to issue a short-lived access token
+		token, err := jwt.NewAccessJwt(*user)
+
+		// All good, return a success and the access token
+		if err == nil {
+			c.JSON(200, gin.H{
+				"success":      true,
+				"access_token": token,
+			})
+		} else {
+			// Error issuing token
+			c.JSON(500, gin.H{
+				"error": "error issuing jwt",
+			})
+		}
 	}
 }
 

@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	keys []*models.JwtKey
+	key *ecdsa.PrivateKey
 )
 
 func Init(db *gorm.DB) {
 	// Init an empty array of pointers to jwtkey
-	keys = []*models.JwtKey{}
+	var keys = []*models.JwtKey{}
 
 	// Populate the array from the database
 	result := db.Find(&keys)
@@ -39,9 +39,24 @@ func Init(db *gorm.DB) {
 
 		// Add the new key to the array
 		keys = append(keys, &key)
-
-		// Now we have at least one existing key.
 	}
+
+	if len(keys) > 0 {
+		// Now we have at least one existing key.
+
+		x509PrivKey := keys[0].Data
+
+		privKey, err := x509.ParseECPrivateKey(x509PrivKey)
+
+		if err != nil {
+			log.Fatalln("[jwt/Init]: failed to parse keyfile")
+		} else {
+			key = privKey
+		}
+	} else {
+		log.Fatalln("[jwt/Init]: no keys found when expected there to be at least one.")
+	}
+
 }
 
 func createKey() models.JwtKey {

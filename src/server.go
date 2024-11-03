@@ -78,7 +78,7 @@ func main() {
 	// Create a group for authorized routes
 	authorized := r.Group("/")
 	// Apply the requireAuth middleware to the authorized group
-	authorized.Use(middleware.RequireAuth())
+	authorized.Use(middleware.RequireAuth(db))
 	{
 		// Any routes registered here will require the user to be authenticated
 
