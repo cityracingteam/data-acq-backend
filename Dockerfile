@@ -5,6 +5,9 @@ WORKDIR /src
 # Copy src folder
 COPY ./src .
 
+# Install build dependencies
+RUN apk add --update git
+
 # Fetch dependencies
 RUN go get
 
