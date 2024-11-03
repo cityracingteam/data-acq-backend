@@ -1,0 +1,11 @@
+[
+    {
+        "ClientId": "backend",
+        "ClientSecrets": ["development-secret"],
+        "AllowedGrantTypes": ["authorization_code"],
+        "AllowedScopes": ["openid", "profile", "email"],
+        "RedirectUris": ["http://localhost:8080/auth/openid-connect/callback"],
+        "RequirePkce" : "false",
+        "AllowAccessTokensViaBrowser": true
+    }
+]

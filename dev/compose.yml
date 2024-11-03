@@ -1,0 +1,20 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: develop
+  
+  oidc:
+    image: ghcr.io/soluto/oidc-server-mock:latest
+    ports:
+      - 8081:8080 # host:container
+    environment:
+      - USERS_CONFIGURATION_PATH=/config/users.json
+      - CLIENTS_CONFIGURATION_PATH=/config/clients.json
+      - SERVER_OPTIONS_PATH=/config/server.json
+    volumes:
+      - ./config/oidc:/config:ro
