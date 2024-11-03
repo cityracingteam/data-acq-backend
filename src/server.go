@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/openidConnect"
 
@@ -13,11 +15,22 @@ import (
 )
 
 func main() {
+	// Check that we are not in release mode without a session secret
+	_, hasKey := os.LookupEnv("SESSION_SECRET")
+	ginMode := os.Getenv("GIN_MODE")
+
+	if !hasKey && ginMode == "release" {
+		// quit the program if this is the case
+		fmt.Println("[error]: GIN_MODE set to release but SESSION_SECRET not specified. This is an unsafe configuration.")
+		return
+	}
+	// continue
+
 	// Init goth for user authentication
 	openidConnect, err := openidConnect.New(
 		environment.GetEnvOrDefault("OPENID_CONNECT_KEY"),
 		environment.GetEnvOrDefault("OPENID_CONNECT_SECRET"),
-		environment.GetEnvOrDefault("ENDPOINT")+"/auth/openid-connect/callback",
+		environment.GetCallbackUri(),
 		environment.GetEnvOrDefault("OPENID_CONNECT_DISCOVERY_URL"))
 
 	if err != nil {
@@ -25,6 +38,14 @@ func main() {
 		return
 	}
 	goth.UseProviders(openidConnect)
+
+	// Override defaults for goth's cookiestore
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	store.MaxAge(864300)          // one day
+	store.Options.Path = "/"      // default
+	store.Options.HttpOnly = true // default, should always be enabled
+	store.Options.Secure = (environment.GetEnvOrDefault("ENDPOINT_SCHEME") == "https")
+	store.Options.Domain = environment.GetEnvOrDefault("DOMAIN")
 
 	// Connect to database
 
