@@ -8,6 +8,9 @@ COPY ./src .
 # Install build dependencies
 RUN apk add --update git
 
+# graphql generate
+RUN go run github.com/99designs/gqlgen generate
+
 # Fetch dependencies
 RUN go get
 
