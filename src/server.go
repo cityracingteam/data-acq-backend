@@ -41,7 +41,7 @@ func main() {
 
 	// Override defaults for goth's cookiestore
 	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
-	store.MaxAge(864300)          // one day
+	store.MaxAge(86400)           // one day
 	store.Options.Path = "/"      // default
 	store.Options.HttpOnly = true // default, should always be enabled
 	store.Options.Secure = (environment.GetEnvOrDefault("ENDPOINT_SCHEME") == "https")
