@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/cityracingteam/data-acq-backend/routes"
 )
 
 func main() {
@@ -17,5 +19,8 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	r.POST("/graphql", routes.GraphqlHandler())
+	r.GET("/graphql/playground", routes.PlaygroundHandler())
 	r.Run()
 }

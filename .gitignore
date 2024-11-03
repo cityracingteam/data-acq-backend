@@ -23,3 +23,13 @@ go.work.sum
 
 # env file
 .env
+
+# gqlgen generated files
+graph/generated.go
+graph/model/models_gen.go
+
+# Code coverage report
+coverage.txt
+
+# Test report
+report.xml
