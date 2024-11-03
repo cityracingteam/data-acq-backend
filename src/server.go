@@ -11,6 +11,7 @@ import (
 	"github.com/markbates/goth/providers/openidConnect"
 
 	"github.com/cityracingteam/data-acq-backend/environment"
+	"github.com/cityracingteam/data-acq-backend/middleware"
 	"github.com/cityracingteam/data-acq-backend/routes"
 )
 
@@ -58,13 +59,23 @@ func main() {
 		})
 	})
 
-	// Register GraphQL routes
-	r.POST("/graphql", routes.GraphqlHandler())
-	r.GET("/graphql/playground", routes.PlaygroundHandler())
-
 	// Register authentication routes
 	r.GET("/auth/:provider/callback", routes.AuthCallbackHandler())
 	r.GET("/auth/:provider", routes.AuthHandler())
+
+	// Register routes that require the caller/user to be authenticated
+
+	// Create a group for authorized routes
+	authorized := r.Group("/")
+	// Apply the requireAuth middleware to the authorized group
+	authorized.Use(middleware.RequireAuth())
+	{
+		// Any routes registered here will require the user to be authenticated
+
+		// Register GraphQL routes
+		authorized.POST("/graphql", routes.GraphqlHandler())
+		authorized.GET("/graphql/playground", routes.PlaygroundHandler())
+	}
 
 	r.Run()
 }
