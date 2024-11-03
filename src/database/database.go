@@ -41,6 +41,7 @@ func migrate(db *gorm.DB) {
 	var models = []interface{}{
 		// Add **all** models here
 		models.JwtKey{},
+		models.User{},
 	}
 
 	// Iterate over each model and migrate it, exiting

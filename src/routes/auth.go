@@ -7,9 +7,10 @@ import (
 	"github.com/cityracingteam/data-acq-backend/util/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
+	"gorm.io/gorm"
 )
 
-func AuthCallbackHandler() gin.HandlerFunc {
+func AuthCallbackHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 		if err != nil {
@@ -23,6 +24,10 @@ func AuthCallbackHandler() gin.HandlerFunc {
 
 		// Get a models.User object
 		user := models.GetUserFromGoth(&gothUser)
+
+		// Insert (or update) the user object in the db
+		db.Save(&user)
+
 		// Use said object to issue a short-lived access token
 		token, err := jwt.NewAccessJwt(*user)
 

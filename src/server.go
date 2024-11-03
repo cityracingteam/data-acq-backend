@@ -70,7 +70,7 @@ func main() {
 	})
 
 	// Register authentication routes
-	r.GET("/auth/:provider/callback", routes.AuthCallbackHandler())
+	r.GET("/auth/:provider/callback", routes.AuthCallbackHandler(db))
 	r.GET("/auth/:provider", routes.AuthHandler())
 
 	// Register routes that require the caller/user to be authenticated
@@ -84,7 +84,7 @@ func main() {
 
 		// Register GraphQL routes
 		authorized.POST("/graphql", routes.GraphqlHandler())
-		authorized.GET("/graphql/playground", routes.PlaygroundHandler())
+		// authorized.GET("/graphql/playground", routes.PlaygroundHandler())
 	}
 
 	r.Run()
