@@ -1,12 +1,15 @@
 services:
-  mongo:
-    image: mongo
-    restart: always
-    ports:
-      - 27017:27017
+  postgres:
+    image: postgres:17-alpine
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: develop
+      # database 'cityracing' will be automatically created
+      # (if not set uses POSTGRES_USER as db name)
+      - POSTGRES_USER=cityracing
+      - POSTGRES_PASSWORD=development
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5433:5432 # host:container
   
   oidc:
     image: ghcr.io/soluto/oidc-server-mock:latest

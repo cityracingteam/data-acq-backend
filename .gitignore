@@ -33,3 +33,6 @@ coverage.txt
 
 # Test report
 report.xml
+
+# development environment data
+dev/data

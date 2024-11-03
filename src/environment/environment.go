@@ -27,4 +27,9 @@ var devEnv = map[string]string{
 	"OPENID_CONNECT_DISCOVERY_URL": "http://localhost:8081/.well-known/openid-configuration",
 	"OPENID_CONNECT_KEY":           "backend",
 	"OPENID_CONNECT_SECRET":        "development-secret",
+	"DB_HOST":                      "localhost",
+	"DB_USER":                      "cityracing",
+	"DB_PASS":                      "development",
+	"DB_NAME":                      "cityracing",
+	"DB_PORT":                      "5433",
 }

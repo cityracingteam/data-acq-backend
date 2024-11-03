@@ -10,9 +10,12 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/openidConnect"
 
+	"github.com/cityracingteam/data-acq-backend/database"
 	"github.com/cityracingteam/data-acq-backend/environment"
+	"github.com/cityracingteam/data-acq-backend/graph/resolver"
 	"github.com/cityracingteam/data-acq-backend/middleware"
 	"github.com/cityracingteam/data-acq-backend/routes"
+	"github.com/cityracingteam/data-acq-backend/util/jwt"
 )
 
 func main() {
@@ -48,7 +51,14 @@ func main() {
 	store.Options.Secure = (environment.GetEnvOrDefault("ENDPOINT_SCHEME") == "https")
 	store.Options.Domain = environment.GetEnvOrDefault("DOMAIN")
 
-	// Connect to database
+	// Connect to the database and place the handle in the graphql resolver
+	// So that is accessible when executing graphql requests in ctx.
+	resolver := &resolver.Resolver{}
+	db := database.Connect()
+	resolver.UpdateDb(db)
+
+	// Setup JWT (loads from database)
+	jwt.Init(db)
 
 	// Create a gin engine instance
 	r := gin.Default()
