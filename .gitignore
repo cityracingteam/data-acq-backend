@@ -25,8 +25,8 @@ go.work.sum
 .env
 
 # gqlgen generated files
-graph/generated.go
-graph/model/models_gen.go
+src/graph/generated.go
+src/graph/model/models_gen.go
 
 # Code coverage report
 coverage.txt

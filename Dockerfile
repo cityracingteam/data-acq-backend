@@ -2,8 +2,8 @@ FROM golang:1.23-alpine AS builder
 
 WORKDIR /src
 
-# Copy current directory
-COPY . .
+# Copy src folder
+COPY ./src .
 
 # Fetch dependencies
 RUN go get
